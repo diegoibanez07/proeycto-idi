@@ -1,0 +1,76 @@
+{% extends "tracking/base.html" %}
+{% load tracking_extras %}
+{% block title %}{{ equipo.id_equipo }} · PREDICT PC{% endblock %}
+{% block content %}
+<nav class="small text-muted mb-1"><a href="{% url 'tracking:bandeja' %}" class="text-muted">Equipos</a> › {{ equipo.id_equipo }}</nav>
+
+<div class="pp-card d-flex justify-content-between align-items-start mb-3">
+  <div>
+    <h1 class="h4 mb-1">{{ equipo.id_equipo }}</h1>
+    <p class="text-muted small mb-0">Serial {{ equipo.serial }} · Lote {{ equipo.lote.codigo }} · {{ equipo.get_tipo_display }} · {{ equipo.marca }} {{ equipo.modelo }}</p>
+  </div>
+  <div class="text-end">
+    {% if demorado %}<span class="badge text-bg-danger-subtle text-danger-emphasis mb-1">Demorado</span><br>{% endif %}
+    <span class="badge {{ equipo.estado|badge_clase }}">{{ equipo.get_etapa_display }}</span>
+    <div class="small text-muted mt-1">En esta etapa hace {{ equipo.tiempo_en_etapa|duracion_legible }}</div>
+  </div>
+</div>
+
+<ul class="nav nav-tabs mb-3">
+  <li class="nav-item"><span class="nav-link active">Resumen</span></li>
+  <li class="nav-item"><a class="nav-link" href="{% url 'tracking:historial' equipo.pk %}">Historial</a></li>
+</ul>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-6">
+    <div class="pp-card h-100">
+      <h2 class="h6">Configuración: esperada vs. encontrada</h2>
+      {% if triage1 %}
+      <table class="table table-sm mb-0">
+        <thead><tr><th>Componente</th><th>Esperada</th><th>Encontrada</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Procesador</td><td>{{ equipo.proc_esperado }}</td><td>{{ equipo.proc_esperado }}</td>
+            <td>{% if triage1.procesador_conforme %}<span class="badge text-bg-success-subtle text-success-emphasis">OK</span>{% else %}<span class="badge text-bg-warning-subtle text-warning-emphasis">Dif.</span>{% endif %}</td></tr>
+          <tr><td>RAM</td><td>{{ equipo.ram_esperada_gb }} GB</td><td>{{ triage1.ram_encontrada_gb }} GB</td>
+            <td>{% if triage1.ram_conforme %}<span class="badge text-bg-success-subtle text-success-emphasis">OK</span>{% else %}<span class="badge text-bg-warning-subtle text-warning-emphasis">Dif.</span>{% endif %}</td></tr>
+          <tr><td>Almacenamiento</td><td>{{ equipo.almacenamiento_tipo_esperado }} {{ equipo.almacenamiento_gb_esperado }} GB</td>
+            <td>{{ triage1.almacenamiento_tipo_encontrado }} {{ triage1.almacenamiento_gb_encontrado }} GB</td>
+            <td>{% if triage1.almacenamiento_conforme %}<span class="badge text-bg-success-subtle text-success-emphasis">OK</span>{% else %}<span class="badge text-bg-warning-subtle text-warning-emphasis">Dif.</span>{% endif %}</td></tr>
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-muted small mb-0">Aún no se ha registrado Triage 1.</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="pp-card h-100">
+      <h2 class="h6">Pendientes y últimos hallazgos</h2>
+      {% for h in hallazgos %}
+      <div class="d-flex justify-content-between border-bottom py-1">
+        <span class="small">{{ h.get_tipo_display }}</span>
+        <span class="badge {{ h.estado|badge_clase }}">{{ h.get_estado_display }}</span>
+      </div>
+      {% empty %}
+      <p class="text-muted small mb-0">Sin hallazgos registrados.</p>
+      {% endfor %}
+      {% if hallazgos %}<p class="small text-muted mt-2 mb-0">{{ hallazgos|length }} hallazgo(s) · {{ equipo.hallazgos_pendientes.count }} pendiente(s)</p>{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="d-flex gap-2 flex-wrap">
+  {% if equipo.etapa == "INGRESO" %}
+    <a href="{% url 'tracking:triage1_encendido' equipo.pk %}" class="btn btn-dark">Registrar Triage 1</a>
+  {% elif equipo.etapa == "TRIAGE_1" %}
+    <a href="{% url 'tracking:triage1_so' equipo.pk %}" class="btn btn-dark">Continuar Triage 1</a>
+  {% elif equipo.etapa == "TRIAGE_2" %}
+    <a href="{% url 'tracking:triage2' equipo.pk %}" class="btn btn-dark">Registrar Triage 2</a>
+  {% elif equipo.etapa == "TRIAGE_3" %}
+    <a href="{% url 'tracking:triage3' equipo.pk %}" class="btn btn-dark">Registrar Triage 3</a>
+  {% elif equipo.etapa == "ELECTRONICA" and remisiones %}
+    <a href="{% url 'tracking:electronica' remisiones.0.pk %}" class="btn btn-dark">Abrir en Electrónica</a>
+  {% endif %}
+  <a href="{% url 'tracking:historial' equipo.pk %}" class="btn btn-outline-secondary">Ver historial completo ›</a>
+</div>
+{% endblock %}

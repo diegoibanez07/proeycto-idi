@@ -1,0 +1,29 @@
+:root {
+  --pp-dark: #3c424c;
+  --pp-navy: #1f3864;
+}
+body { background: #f4f6f8; }
+.pp-topbar { height: 48px; background: var(--pp-dark); }
+.pp-sidebar {
+  width: 190px; min-height: calc(100vh - 48px);
+  background: #eef1f5; border-right: 1px solid #d9dee5;
+}
+.pp-nav-link {
+  display: block; padding: 8px 12px; margin-bottom: 4px; border-radius: 6px;
+  color: #5f6b7a; text-decoration: none; font-size: .92rem;
+}
+.pp-nav-link.active { background: #fff; color: #1f2530; font-weight: 600; border: 1px solid #c9d0da; }
+.pp-nav-link:hover { color: #1f2530; }
+.pp-main { max-width: 1100px; }
+.pp-card { background: #fff; border: 1px solid #dde2e8; border-radius: 8px; padding: 1rem 1.25rem; }
+.pp-kpi { background: #fff; border: 1px solid #dde2e8; border-radius: 8px; padding: .75rem 1rem; }
+.pp-kpi .value { font-size: 1.4rem; font-weight: 700; }
+.pp-stepper .step { color: #9aa3af; }
+.pp-stepper .step.done, .pp-stepper .step.current { color: #1f2530; font-weight: 600; }
+.pp-timeline { border-left: 2px solid #c9d0da; margin-left: 6px; padding-left: 18px; }
+.pp-timeline .evt { position: relative; margin-bottom: 14px; }
+.pp-timeline .evt:before { content: ""; position: absolute; left: -23px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid #1f2530; }
+.pp-timeline .evt.destacado:before { background: #1f2530; }
+.pp-timeline .evt.destacado .box { background: #fff8ec; border-color: #e0a100; }
+.pp-timeline .box { border: 1px solid #dde2e8; border-radius: 6px; padding: .6rem .8rem; }
+.readonly-field { background: #f1f3f5; }

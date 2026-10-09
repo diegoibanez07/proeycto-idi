@@ -1,0 +1,50 @@
+{% extends "tracking/base.html" %}
+{% load tracking_extras static %}
+{% block title %}Panel supervisor · PREDICT PC{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Panel de seguimiento</h1>
+
+<div class="row row-cols-2 row-cols-md-4 g-2 mb-3">
+  <div class="col"><div class="pp-kpi"><div class="small text-muted">En proceso</div><div class="value">{{ datos.en_proceso }}</div></div></div>
+  <div class="col"><div class="pp-kpi"><div class="small text-muted">Remisiones abiertas</div><div class="value">{{ datos.remisiones_abiertas }}</div>{% if datos.remisiones_abiertas > 0 %}<span class="badge text-bg-warning-subtle text-warning-emphasis">Revisar</span>{% endif %}</div></div>
+  <div class="col"><div class="pp-kpi"><div class="small text-muted">Demorados</div><div class="value">{{ datos.demorados|length }}</div>{% if datos.demorados %}<span class="badge text-bg-danger-subtle text-danger-emphasis">Atender</span>{% endif %}</div></div>
+  <div class="col"><div class="pp-kpi"><div class="small text-muted">Finalizados hoy</div><div class="value">{{ datos.finalizados_hoy }}</div></div></div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-6"><div class="pp-card"><h2 class="h6">Equipos por etapa</h2><canvas id="chEtapa" height="160"></canvas></div></div>
+  <div class="col-md-6"><div class="pp-card"><h2 class="h6">Tiempo promedio por etapa (h)</h2><canvas id="chTiempo" height="160"></canvas></div></div>
+</div>
+
+<div class="pp-card">
+  <h2 class="h6">Equipos demorados</h2>
+  <table class="table table-sm align-middle mb-0">
+    <thead><tr><th>ID equipo</th><th>Etapa actual</th><th>Tiempo en etapa</th><th></th></tr></thead>
+    <tbody>
+      {% for e in datos.demorados %}
+      <tr>
+        <td>{{ e.id_equipo }}</td><td>{{ e.get_etapa_display }}</td><td>{{ e.tiempo_en_etapa|duracion_legible }}</td>
+        <td><a href="{% url 'tracking:historial' e.pk %}" class="link-dark">Ver historial ›</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="4" class="text-muted text-center py-3">No hay equipos demorados con el umbral actual.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+  <p class="text-muted small mt-2 mb-0">Umbral de «demorado» por etapa: parámetro configurado en <code>services.UMBRAL_DEMORADO_HORAS</code> (por confirmar con el supervisor, Fase 3 DD-11).</p>
+</div>
+
+<script src="{% static 'vendor/chartjs/chart.umd.min.js' %}"></script>
+<script>
+const etapaData = {{ chart_etapa_json|safe }};
+const tiempoData = {{ chart_tiempo_json|safe }};
+new Chart(document.getElementById('chEtapa'), {
+  type: 'bar',
+  data: { labels: etapaData.labels, datasets: [{ label: 'Equipos', data: etapaData.valores, backgroundColor: '#5f6b7a' }] },
+  options: { indexAxis: 'y', plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('chTiempo'), {
+  type: 'bar',
+  data: { labels: tiempoData.labels, datasets: [{ label: 'Horas', data: tiempoData.valores, backgroundColor: '#8a95a3' }] },
+  options: { plugins: { legend: { display: false } } }
+});
+</script>
+{% endblock %}

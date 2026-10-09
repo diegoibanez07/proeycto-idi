@@ -1,0 +1,64 @@
+{% extends "tracking/base.html" %}
+{% block title %}Registrar equipo · PREDICT PC{% endblock %}
+{% block content %}
+<nav class="small text-muted mb-1"><a href="{% url 'tracking:bandeja' %}" class="text-muted">Equipos</a> › Nuevo</nav>
+<h1 class="h3 mb-3">Registrar ingreso de equipo</h1>
+
+<form method="post" class="row g-4">
+  {% csrf_token %}
+  <div class="col-lg-8">
+    <div class="pp-card">
+      <h2 class="h6 text-uppercase text-muted">Identificación</h2>
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <label class="form-label">Lote *</label>
+          {{ form.lote_codigo }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Serial *</label>
+          {{ form.serial }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Tipo de equipo *</label>
+          {{ form.tipo }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Marca *</label>{{ form.marca }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Modelo *</label>{{ form.modelo }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Fecha de ingreso</label>{{ form.fecha_ingreso }}
+        </div>
+      </div>
+      <hr>
+      <h2 class="h6 text-uppercase text-muted">Configuración esperada (especificación del proveedor)</h2>
+      <div class="row g-3">
+        <div class="col-md-4"><label class="form-label">Procesador *</label>{{ form.proc_esperado }}</div>
+        <div class="col-md-4"><label class="form-label">RAM esperada (GB) *</label>{{ form.ram_esperada_gb }}</div>
+        <div class="col-md-4"><label class="form-label">Almacenamiento *</label>{{ form.almacenamiento_tipo_esperado }}</div>
+        <div class="col-md-4"><label class="form-label">Capacidad (GB) *</label>{{ form.almacenamiento_gb_esperado }}</div>
+        <div class="col-md-4"><label class="form-label">SO esperado</label>{{ form.so_esperado }}</div>
+        <div class="col-12"><label class="form-label">Observaciones de ingreso (opcional)</label>{{ form.observaciones_ingreso }}</div>
+      </div>
+      {% if form.non_field_errors %}<div class="text-danger small mt-2">{{ form.non_field_errors }}</div>{% endif %}
+      <div class="d-flex gap-2 mt-4">
+        <a href="{% url 'tracking:bandeja' %}" class="btn btn-outline-secondary">Cancelar</a>
+        <button class="btn btn-dark">Guardar y continuar a Triage 1 ›</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="pp-card">
+      <h2 class="h6 text-uppercase text-muted">Al guardar</h2>
+      <ul class="list-unstyled small">
+        <li class="mb-2">✔ Se crea la ficha única del equipo.</li>
+        <li class="mb-2">✔ Queda disponible en Triage 1.</li>
+        <li class="mb-2">✔ Se registra fecha y usuario automáticamente.</li>
+      </ul>
+      <p class="text-muted small mb-0">* Campo obligatorio</p>
+    </div>
+  </div>
+</form>
+{% endblock %}

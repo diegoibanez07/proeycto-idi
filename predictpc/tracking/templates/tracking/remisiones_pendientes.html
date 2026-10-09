@@ -1,0 +1,24 @@
+{% extends "tracking/base.html" %}
+{% block title %}Electrónica · Remisiones pendientes{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Electrónica · Remisiones pendientes</h1>
+<div class="table-responsive pp-card p-0">
+  <table class="table table-hover mb-0 align-middle">
+    <thead class="table-light"><tr><th>Código</th><th>Equipo</th><th>Motivo</th><th>Origen</th><th>Fecha</th><th></th></tr></thead>
+    <tbody>
+      {% for r in remisiones %}
+      <tr>
+        <td>R-{{ r.pk|stringformat:"04d" }}</td>
+        <td>{{ r.equipo.id_equipo }}</td>
+        <td>{{ r.motivo }}</td>
+        <td>{{ r.get_etapa_origen_display }}</td>
+        <td class="text-muted small">{{ r.fecha|timesince }}</td>
+        <td><a href="{% url 'tracking:electronica' r.pk %}" class="btn btn-sm btn-dark">Abrir ›</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center text-muted py-4">No hay remisiones abiertas.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

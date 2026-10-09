@@ -1,0 +1,66 @@
+{% extends "tracking/base.html" %}
+{% block title %}Triage 1 · Encendido · PREDICT PC{% endblock %}
+{% block content %}
+<nav class="small text-muted mb-1"><a href="{% url 'tracking:bandeja' %}" class="text-muted">Equipos</a> › {{ equipo.id_equipo }} › Triage 1</nav>
+<h1 class="h4 mb-3">Triage 1 · Encendido y configuración</h1>
+
+<ul class="nav nav-pills mb-3">
+  <li class="nav-item"><span class="nav-link active">1. Encendido y configuración</span></li>
+  <li class="nav-item"><span class="nav-link disabled">2. SO, controladores y excepciones</span></li>
+</ul>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="pp-card mb-3">
+    <h2 class="h6">A. Resultado de encendido</h2>
+    <div class="d-flex gap-4 flex-wrap">
+      {% for radio in form.resultado_encendido %}
+        <div class="form-check">{{ radio.tag }} <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label></div>
+      {% endfor %}
+      <div class="flex-fill" style="min-width:220px">
+        <label class="form-label small text-muted mb-0">Observación (opcional)</label>{{ form.observacion_encendido }}
+      </div>
+    </div>
+  </div>
+
+  <div class="pp-card mb-3">
+    <div class="d-flex justify-content-between">
+      <h2 class="h6">B. Contraste con las especificaciones del proveedor</h2>
+      <span class="small text-muted">Esperada: solo lectura</span>
+    </div>
+    <table class="table align-middle">
+      <thead><tr><th>Componente</th><th>Esperada</th><th>Encontrada</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Procesador</td>
+          <td><input class="form-control readonly-field" value="{{ equipo.proc_esperado }}" readonly></td>
+          <td><input class="form-control readonly-field" value="{{ equipo.proc_esperado }}" readonly></td>
+          <td class="form-check form-switch">{{ form.procesador_conforme }} <label class="form-check-label small">Conforme</label></td>
+        </tr>
+        <tr>
+          <td>RAM</td>
+          <td><input class="form-control readonly-field" value="{{ equipo.ram_esperada_gb }} GB" readonly></td>
+          <td>{{ form.ram_encontrada_gb }}</td>
+          <td class="form-check form-switch">{{ form.ram_conforme }} <label class="form-check-label small">Conforme</label></td>
+        </tr>
+        <tr>
+          <td>Almacenamiento</td>
+          <td><input class="form-control readonly-field" value="{{ equipo.almacenamiento_tipo_esperado }} {{ equipo.almacenamiento_gb_esperado }} GB" readonly></td>
+          <td class="d-flex gap-2">{{ form.almacenamiento_tipo_encontrado }} {{ form.almacenamiento_gb_encontrado }}</td>
+          <td class="form-check form-switch">{{ form.almacenamiento_conforme }} <label class="form-check-label small">Conforme</label></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mt-2">
+      <label class="form-label">Descripción de la diferencia * (obligatoria si hay diferencia)</label>
+      {{ form.diferencia_descripcion }}
+    </div>
+    {% if form.non_field_errors %}<div class="alert alert-warning mt-2 py-2 small">{{ form.non_field_errors }}</div>{% endif %}
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <span class="text-muted small align-self-center">Se guarda técnico, fecha y hora de forma automática.</span>
+    <button class="btn btn-dark">Guardar y continuar ›</button>
+  </div>
+</form>
+{% endblock %}

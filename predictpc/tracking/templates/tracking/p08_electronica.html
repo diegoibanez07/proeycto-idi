@@ -1,0 +1,57 @@
+{% extends "tracking/base.html" %}
+{% load tracking_extras %}
+{% block title %}Remisión {{ remision.pk }} · PREDICT PC{% endblock %}
+{% block content %}
+<nav class="small text-muted mb-1"><a href="{% url 'tracking:remisiones_pendientes' %}" class="text-muted">Remisiones</a> › R-{{ remision.pk|stringformat:"04d" }}</nav>
+<h1 class="h4 mb-3">Remisión R-{{ remision.pk|stringformat:"04d" }} · Electrónica</h1>
+
+<div class="pp-card mb-3 d-flex justify-content-between align-items-start flex-wrap gap-2">
+  <div>
+    <h2 class="h5 mb-1">{{ equipo.id_equipo }}</h2>
+    <p class="text-muted small mb-0">Origen: {{ remision.get_etapa_origen_display }} · Remitió: {{ remision.remitido_por|default:"—" }} · Motivo: {{ remision.motivo }}</p>
+  </div>
+  <span class="badge text-bg-warning-subtle text-warning-emphasis">{{ equipo.get_estado_display }}</span>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="pp-card h-100">
+      <h2 class="h6">Antecedentes del equipo</h2>
+      <div class="pp-timeline">
+        {% for ev in antecedentes %}
+        <div class="evt {% if ev.destacado %}destacado{% endif %}">
+          <div class="small text-muted fw-semibold">{{ ev.fecha|date:"d/m H:i" }}</div>
+          <div class="box small">{{ ev.descripcion }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <p class="text-muted small mb-0">Consulta de solo lectura.</p>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="pp-card h-100">
+      <h2 class="h6">Diagnóstico e intervención</h2>
+      <form method="post">
+        {% csrf_token %}
+        <label class="form-label">Diagnóstico *</label>{{ form.diagnostico }}
+        <label class="form-label mt-2">Intervención realizada *</label>{{ form.intervencion_realizada }}
+        <div class="row g-2 mt-2">
+          <div class="col-md-7"><label class="form-label">Archivo .bin utilizado</label>{{ form.archivo_bin }}</div>
+          <div class="col-md-5">
+            <label class="form-label">¿Verificada? *</label>
+            <div class="d-flex gap-3">
+              {% for radio in form.verificada %}
+                <div class="form-check">{{ radio.tag }} <label class="form-check-label">{{ radio.choice_label }}</label></div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <label class="form-label mt-2">Observaciones</label>{{ form.observaciones }}
+        <hr>
+        <label class="form-label">Devolver equipo a *</label>{{ form.etapa_retorno }}
+        <div class="text-end mt-3"><button class="btn btn-dark">Guardar y devolver al flujo ›</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

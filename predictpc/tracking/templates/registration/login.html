@@ -1,0 +1,16 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>Entrar · PREDICT PC</title>
+<link href="/static/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+</head><body class="bg-light">
+<div class="container" style="max-width:380px; margin-top:8rem">
+  <h1 class="h4 text-center mb-4">PREDICT PC</h1>
+  <form method="post" class="card p-4 shadow-sm">
+    {% csrf_token %}
+    {% if form.errors %}<div class="alert alert-danger py-2 small">Usuario o contraseña incorrectos.</div>{% endif %}
+    <div class="mb-3"><label class="form-label">Usuario</label><input class="form-control" type="text" name="username" required autofocus></div>
+    <div class="mb-3"><label class="form-label">Contraseña</label><input class="form-control" type="password" name="password" required></div>
+    <button class="btn btn-dark w-100">Entrar</button>
+  </form>
+  <p class="text-muted small text-center mt-3">Usuarios de demostración: tecnico1 / tecnico2 / supervisor · contraseña <code>predictpc2026</code></p>
+</div>
+</body></html>

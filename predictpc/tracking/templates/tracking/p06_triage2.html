@@ -1,0 +1,43 @@
+{% extends "tracking/base.html" %}
+{% block title %}Triage 2 · PREDICT PC{% endblock %}
+{% block content %}
+<nav class="small text-muted mb-1"><a href="{% url 'tracking:bandeja' %}" class="text-muted">Equipos</a> › {{ equipo.id_equipo }} › Triage 2</nav>
+<h1 class="h4 mb-3">Triage 2 · Mantenimiento y pruebas funcionales</h1>
+
+<form method="post">
+  {% csrf_token %}{{ formset.management_form }}
+  <div class="pp-card mb-3">
+    <h2 class="h6">A. Mantenimiento preventivo</h2>
+    <div class="d-flex gap-4 flex-wrap">
+      <div class="form-check">{{ mform.limpieza_interna }} <label class="form-check-label">Limpieza interna</label></div>
+      <div class="form-check">{{ mform.ventiladores }} <label class="form-check-label">Ventiladores</label></div>
+      <div class="form-check">{{ mform.pasta_termica }} <label class="form-check-label">Pasta térmica</label></div>
+      <div class="form-check">{{ mform.limpieza_teclado }} <label class="form-check-label">Limpieza de teclado</label></div>
+    </div>
+  </div>
+
+  <div class="pp-card mb-3">
+    <h2 class="h6">B. Verificación individual de periféricos y puertos</h2>
+    <table class="table align-middle">
+      <thead><tr><th>Elemento</th><th>Resultado</th><th>Observación</th></tr></thead>
+      <tbody>
+        {% for f in formset %}
+        <tr>
+          <td>{{ f.instance.get_elemento_display }}{{ f.elemento }}{{ f.id }}</td>
+          <td class="d-flex gap-3">
+            {% for radio in f.resultado %}
+              <div class="form-check">{{ radio.tag }} <label class="form-check-label">{{ radio.choice_label }}</label></div>
+            {% endfor %}
+          </td>
+          <td>{{ f.observacion }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2">
+    <button class="btn btn-dark">Finalizar Triage 2 ›</button>
+  </div>
+</form>
+{% endblock %}

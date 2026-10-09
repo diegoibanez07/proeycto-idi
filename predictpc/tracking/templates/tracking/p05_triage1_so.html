@@ -1,0 +1,55 @@
+{% extends "tracking/base.html" %}
+{% block title %}Triage 1 · SO y BIOS · PREDICT PC{% endblock %}
+{% block content %}
+<nav class="small text-muted mb-1"><a href="{% url 'tracking:bandeja' %}" class="text-muted">Equipos</a> › {{ equipo.id_equipo }} › Triage 1</nav>
+<h1 class="h4 mb-3">Triage 1 · SO, controladores y excepciones</h1>
+
+<ul class="nav nav-pills mb-3">
+  <li class="nav-item"><span class="nav-link">✓ 1. Encendido y configuración</span></li>
+  <li class="nav-item"><span class="nav-link active">2. SO, controladores y excepciones</span></li>
+</ul>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="row g-3">
+    <div class="col-lg-7">
+      <div class="pp-card h-100">
+        <h2 class="h6">C. Sistema operativo y controladores</h2>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6"><label class="form-label">Sistema operativo *</label>{{ form.so_instalado }}</div>
+          <div class="col-md-6"><label class="form-label">Imagen / versión usada *</label>{{ form.imagen_version }}</div>
+        </div>
+        <label class="form-label small text-muted">Controladores instalados *</label>
+        <div class="row row-cols-2 g-2 mb-3">
+          <div class="col form-check">{{ form.drivers_video }} <label class="form-check-label">Video</label></div>
+          <div class="col form-check">{{ form.drivers_audio }} <label class="form-check-label">Audio</label></div>
+          <div class="col form-check">{{ form.drivers_red }} <label class="form-check-label">Red / Wi-Fi</label></div>
+          <div class="col form-check">{{ form.drivers_chipset }} <label class="form-check-label">Chipset</label></div>
+          <div class="col form-check">{{ form.drivers_bluetooth }} <label class="form-check-label">Bluetooth</label></div>
+          <div class="col form-check">{{ form.drivers_huellas }} <label class="form-check-label">Lector de huellas</label></div>
+        </div>
+        <label class="form-label">Observaciones</label>{{ form.observaciones_so }}
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="pp-card h-100">
+        <h2 class="h6">D. Excepciones</h2>
+        <div class="form-check form-switch mb-3">
+          {{ form.bios_bloqueada }}
+          <label class="form-check-label">¿Se detecta BIOS bloqueada?</label>
+        </div>
+        <div class="border border-danger-subtle rounded p-3 bg-danger-subtle bg-opacity-10">
+          <p class="text-danger fw-semibold small">Se generará una remisión a Electrónica</p>
+          <label class="form-label small">Evidencia (nota, referencia de foto) *</label>
+          {{ form.evidencia_bios }}
+          <p class="text-muted small mt-2 mb-0">Remite: {{ request.user }} (automático). Estado resultante: <strong>Pendiente de intervención</strong>.</p>
+        </div>
+        {% if form.non_field_errors %}<div class="alert alert-warning mt-2 py-2 small">{{ form.non_field_errors }}</div>{% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="text-end mt-3">
+    <button class="btn btn-dark">Guardar y continuar ›</button>
+  </div>
+</form>
+{% endblock %}

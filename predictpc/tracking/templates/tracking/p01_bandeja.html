@@ -1,0 +1,68 @@
+{% extends "tracking/base.html" %}
+{% load tracking_extras %}
+{% block title %}Bandeja de equipos · PREDICT PC{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Bandeja de equipos</h1>
+  <a href="{% url 'tracking:registrar_equipo' %}" class="btn btn-dark">+ Registrar equipo</a>
+</div>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-4">
+    <label class="form-label small text-muted">Buscar</label>
+    <input class="form-control" name="q" value="{{ q }}" placeholder="ID o serial…">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label small text-muted">Etapa</label>
+    <select class="form-select" name="etapa">
+      <option value="">Todas</option>
+      {% for v, l in etapas %}<option value="{{ v }}" {% if etapa_sel == v %}selected{% endif %}>{{ l }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label small text-muted">Estado</label>
+    <select class="form-select" name="estado">
+      <option value="">Todos</option>
+      {% for v, l in estados %}<option value="{{ v }}" {% if estado_sel == v %}selected{% endif %}>{{ l }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2 d-flex align-items-end">
+    <button class="btn btn-outline-secondary w-100">Filtrar</button>
+  </div>
+</form>
+
+<div class="row row-cols-2 row-cols-md-5 g-2 mb-3">
+  {% for etapa, cant in contadores.items %}
+  <div class="col">
+    <div class="pp-kpi"><div class="small text-muted">{{ etapa }}</div><div class="value">{{ cant }}</div></div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="table-responsive pp-card p-0">
+  <table class="table table-hover mb-0 align-middle">
+    <thead class="table-light">
+      <tr><th>ID equipo</th><th>Serial</th><th>Lote</th><th>Etapa</th><th>Estado</th><th>Última actualización</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for e in equipos %}
+      <tr>
+        <td class="fw-semibold">{{ e.id_equipo }}</td>
+        <td>{{ e.serial }}</td>
+        <td>{{ e.lote.codigo }}</td>
+        <td>{{ e.get_etapa_display }}</td>
+        <td>
+          {% if e.demorado %}<span class="badge badge_clase text-bg-danger-subtle text-danger-emphasis">Demorado</span>
+          {% else %}<span class="badge {{ e.estado|badge_clase }}">{{ e.get_estado_display }}</span>{% endif %}
+        </td>
+        <td class="text-muted small">{{ e.etapa_desde|timesince }}</td>
+        <td><a href="{% url 'tracking:ficha_equipo' e.pk %}" class="link-dark fw-semibold text-decoration-none">Abrir ›</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center text-muted py-4">No hay equipos registrados todavía.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="text-muted small mt-2">Mostrando {{ equipos|length }} equipo(s).</p>
+{% endblock %}

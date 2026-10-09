@@ -1,0 +1,51 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}PREDICT PC{% endblock %}</title>
+<link href="{% static 'vendor/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'css/predictpc.css' %}" rel="stylesheet">
+</head>
+<body>
+<header class="pp-topbar d-flex align-items-center justify-content-between px-3">
+  <a href="{% url 'tracking:bandeja' %}" class="text-white text-decoration-none fw-bold fs-5">PREDICT PC</a>
+  <div class="text-white small d-flex align-items-center gap-3">
+    {% if user.is_authenticated %}
+      <span>{{ user.get_full_name|default:user.username }}</span>
+      <form action="{% url 'logout' %}" method="post" class="d-inline">{% csrf_token %}
+        <button class="btn btn-sm btn-outline-light">Salir</button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}" class="text-white">Entrar</a>
+    {% endif %}
+  </div>
+</header>
+
+<div class="d-flex">
+  <nav class="pp-sidebar p-2">
+    {% url 'tracking:bandeja' as u_bandeja %}
+    {% url 'tracking:registrar_equipo' as u_registrar %}
+    {% url 'tracking:remisiones_pendientes' as u_remisiones %}
+    {% url 'tracking:panel_supervisor' as u_panel %}
+    <a class="pp-nav-link {% if request.path == u_bandeja %}active{% endif %}" href="{{ u_bandeja }}">Equipos</a>
+    <a class="pp-nav-link {% if request.path == u_registrar %}active{% endif %}" href="{{ u_registrar }}">Registrar equipo</a>
+    <a class="pp-nav-link {% if 'triage1' in request.path %}active{% endif %}" href="{{ u_bandeja }}?etapa=TRIAGE_1">Triage 1</a>
+    <a class="pp-nav-link {% if 'triage2' in request.path %}active{% endif %}" href="{{ u_bandeja }}?etapa=TRIAGE_2">Triage 2</a>
+    <a class="pp-nav-link {% if 'triage3' in request.path %}active{% endif %}" href="{{ u_bandeja }}?etapa=TRIAGE_3">Triage 3</a>
+    <a class="pp-nav-link {% if request.path == u_remisiones %}active{% endif %}" href="{{ u_remisiones }}">Electrónica</a>
+    <a class="pp-nav-link {% if 'historial' in request.path %}active{% endif %}" href="{{ u_bandeja }}">Historial</a>
+    <a class="pp-nav-link {% if request.path == u_panel %}active{% endif %}" href="{{ u_panel }}">Panel supervisor</a>
+  </nav>
+
+  <main class="flex-fill p-4 pp-main">
+    {% if messages %}
+      {% for m in messages %}
+        <div class="alert alert-{{ m.tags|default:'info' }} py-2">{{ m }}</div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+</body>
+</html>
